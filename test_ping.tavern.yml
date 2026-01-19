@@ -1,7 +1,7 @@
 test_name: Базовая проверка работоспособности
 
 stages:
-  - name: "Проверить PING"
+  - name: "Проверить /ping"
     request:
       url: "{BASE_URL}/ping"
       method: GET

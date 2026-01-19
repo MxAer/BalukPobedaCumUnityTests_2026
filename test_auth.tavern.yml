@@ -1,0 +1,46 @@
+test_name: Регистрация
+
+marks:
+  - usefixtures:
+      - generate_random_email
+
+stages:
+  - name: "Проверить 201 FULL /auth/register"
+    request:
+      url: "{BASE_URL}/auth/register"
+      method: POST
+      json:
+        email: "{generate_random_email}"
+        password: "V3rYH@rdP@$sW0Rd!1!11!!!"
+        fullName: "Igor Bailyuk"
+        age: 27
+        region: Europe
+        gender: MALE
+        maritalStatus: SINGLE
+    response:
+      status_code: 201
+      json:
+        expiresIn: 3600
+        user:
+          email: "{generate_random_email}"
+          fullName: "Igor Bailyuk"
+          age: 27
+          region: Europe
+          gender: MALE
+          role: USER
+          maritalStatus: SINGLE
+          isActive: true
+
+  - name: "Проверить 409 /auth/register"
+    request:
+      url: "{BASE_URL}/auth/register"
+      method: POST
+      json:
+        email: "{generate_random_email}"
+        password: "V3rYH@rdP@$sW0Rd!1!11!!!"
+        fullName: "Igor Bailyuk"
+    response:
+      status_code: 409
+      json:
+        code: EMAIL_ALREADY_EXISTS
+        path: /api/v1/auth/register
