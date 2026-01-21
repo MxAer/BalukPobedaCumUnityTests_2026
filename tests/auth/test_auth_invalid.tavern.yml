@@ -5,132 +5,6 @@ marks:
       - generate_random_email
 
 stages:
-  - name: "Проверить 422 (invalid email 1) /auth/register"
-    request:
-      url: "{BASE_URL}/auth/register"
-      method: POST
-      json:
-        email: "dsadsadas"
-        password: "V3rYH@rdP@$sW0Rd!1!11!!!"
-        fullName: "Igor Bailyuk"
-    response:
-      status_code: 422
-      json:
-        code: VALIDATION_FAILED
-        path: /api/v1/auth/register
-
-  - name: "Проверить 422 (invalid email 2) /auth/register"
-    request:
-      url: "{BASE_URL}/auth/register"
-      method: POST
-      json:
-        email: "dsadsadas@dsadsa"
-        password: "V3rYH@rdP@$sW0Rd!1!11!!!"
-        fullName: "Igor Bailyuk"
-    response:
-      status_code: 422
-      json:
-        code: VALIDATION_FAILED
-        path: /api/v1/auth/register
-
-  - name: "Проверить 422 (invalid email 3) /auth/register"
-    request:
-      url: "{BASE_URL}/auth/register"
-      method: POST
-      json:
-        email: "dsadsadas@dsadsa."
-        password: "V3rYH@rdP@$sW0Rd!1!11!!!"
-        fullName: "Igor Bailyuk"
-    response:
-      status_code: 422
-      json:
-        code: VALIDATION_FAILED
-        path: /api/v1/auth/register
-
-  - name: "Проверить 422 (invalid email 4) /auth/register"
-    request:
-      url: "{BASE_URL}/auth/register"
-      method: POST
-      json:
-        email: "dsadsadas@dsadsa.com,,,,,"
-        password: "V3rYH@rdP@$sW0Rd!1!11!!!"
-        fullName: "Igor Bailyuk"
-    response:
-      status_code: 422
-      json:
-        code: VALIDATION_FAILED
-        path: /api/v1/auth/register
-
-  - name: "Проверить 422 (invalid email 5) /auth/register"
-    request:
-      url: "{BASE_URL}/auth/register"
-      method: POST
-      json:
-        email: "dsadsadas@dsa!!!!dsa.com"
-        password: "V3rYH@rdP@$sW0Rd!1!11!!!"
-        fullName: "Igor Bailyuk"
-    response:
-      status_code: 422
-      json:
-        code: VALIDATION_FAILED
-        path: /api/v1/auth/register
-
-  - name: "Проверить 422 (invalid email 6) /auth/register"
-    request:
-      url: "{BASE_URL}/auth/register"
-      method: POST
-      json:
-        email: "dsads,,,,adas@dsadsa.com"
-        password: "V3rYH@rdP@$sW0Rd!1!11!!!"
-        fullName: "Igor Bailyuk"
-    response:
-      status_code: 422
-      json:
-        code: VALIDATION_FAILED
-        path: /api/v1/auth/register
-
-  - name: "Проверить 422 (invalid email 7) /auth/register"
-    request:
-      url: "{BASE_URL}/auth/register"
-      method: POST
-      json:
-        email: "выфхзвыфзхвыфзхвы@dsadsa.com"
-        password: "V3rYH@rdP@$sW0Rd!1!11!!!"
-        fullName: "Igor Bailyuk"
-    response:
-      status_code: 422
-      json:
-        code: VALIDATION_FAILED
-        path: /api/v1/auth/register
-
-  - name: "Проверить 422 (invalid email 7) /auth/register"
-    request:
-      url: "{BASE_URL}/auth/register"
-      method: POST
-      json:
-        email: "dsdsa@192.168.1.1"
-        password: "V3rYH@rdP@$sW0Rd!1!11!!!"
-        fullName: "Igor Bailyuk"
-    response:
-      status_code: 422
-      json:
-        code: VALIDATION_FAILED
-        path: /api/v1/auth/register
-
-  - name: "Проверить 422 (invalid email 8) /auth/register"
-    request:
-      url: "{BASE_URL}/auth/register"
-      method: POST
-      json:
-        email: "{generate_random_email}@test.test.test.test"
-        password: "V3rYH@rdP@$sW0Rd!1!11!!!"
-        fullName: "Igor Bailyuk"
-    response:
-      status_code: 422
-      json:
-        code: VALIDATION_FAILED
-        path: /api/v1/auth/register
-
   - name: "Проверить 422 (invalid fullname) /auth/register"
     request:
       url: "{BASE_URL}/auth/register"
@@ -281,6 +155,20 @@ stages:
       method: POST
       json:
         email: "{generate_random_email}"
+        fullName: "Igor Bailyuk"
+    response:
+      status_code: 422
+      json:
+        code: VALIDATION_FAILED
+        path: /api/v1/auth/register
+
+  - name: "Проверить 422 (invalid email Cyrillic) /auth/register"
+    request:
+      url: "{BASE_URL}/auth/register"
+      method: POST
+      json:
+        email: "игорь@mail.ru"
+        password: "V3rYH@rdP@$sW0Rd!1!11!!!"
         fullName: "Igor Bailyuk"
     response:
       status_code: 422
