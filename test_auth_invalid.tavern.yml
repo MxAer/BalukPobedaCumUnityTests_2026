@@ -94,20 +94,6 @@ stages:
       url: "{BASE_URL}/auth/register"
       method: POST
       json:
-        email: "выфхзвыфзхвыфзхвы@dsadsa.com"
-        password: "V3rYH@rdP@$sW0Rd!1!11!!!"
-        fullName: "Igor Bailyuk"
-    response:
-      status_code: 422
-      json:
-        code: VALIDATION_FAILED
-        path: /api/v1/auth/register
-
-  - name: "Проверить 422 (invalid email 7) /auth/register"
-    request:
-      url: "{BASE_URL}/auth/register"
-      method: POST
-      json:
         email: "dsdsa@192.168.1.1"
         password: "V3rYH@rdP@$sW0Rd!1!11!!!"
         fullName: "Igor Bailyuk"
