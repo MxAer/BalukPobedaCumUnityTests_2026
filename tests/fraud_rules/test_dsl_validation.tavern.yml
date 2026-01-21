@@ -1,0 +1,79 @@
+test_name: DSL Validation & Normalization Edge Cases
+
+marks:
+  - usefixtures:
+      - admin_token
+
+stages:
+  - name: "DSL Case Insensitivity (AND/OR/NOT)"
+    request:
+      url: "{BASE_URL}/fraud-rules/validate"
+      method: POST
+      headers:
+        Authorization: "Bearer {admin_token}"
+      json:
+        dslExpression: "amount > 100 and currency = 'RUB' or amount < 10 and not (ipAddress = '1.1.1.1')"
+    response:
+      status_code: 200
+      json:
+        isValid: true
+        # Normalization should capitalize keywords
+        normalizedExpression: "amount > 100 AND currency = 'RUB' OR amount < 10 AND NOT ipAddress = '1.1.1.1'"
+
+  - name: "DSL Normalization: Remove Redundant Parentheses"
+    request:
+      url: "{BASE_URL}/fraud-rules/validate"
+      method: POST
+      headers:
+        Authorization: "Bearer {admin_token}"
+      json:
+        dslExpression: "((amount > 100))"
+    response:
+      status_code: 200
+      json:
+        isValid: true
+        normalizedExpression: "amount > 100"
+
+  - name: "DSL Normalization: Spacing"
+    request:
+      url: "{BASE_URL}/fraud-rules/validate"
+      method: POST
+      headers:
+        Authorization: "Bearer {admin_token}"
+      json:
+        dslExpression: "amount>100"
+    response:
+      status_code: 200
+      json:
+        isValid: true
+        normalizedExpression: "amount > 100"
+
+  - name: "DSL Invalid Operator for String"
+    request:
+      url: "{BASE_URL}/fraud-rules/validate"
+      method: POST
+      headers:
+        Authorization: "Bearer {admin_token}"
+      json:
+        dslExpression: "currency > 'RUB'"
+    response:
+      status_code: 200
+      json:
+        isValid: false
+        errors:
+          - code: DSL_INVALID_OPERATOR
+
+  - name: "DSL Invalid Field"
+    request:
+      url: "{BASE_URL}/fraud-rules/validate"
+      method: POST
+      headers:
+        Authorization: "Bearer {admin_token}"
+      json:
+        dslExpression: "unknownField > 10"
+    response:
+      status_code: 200
+      json:
+        isValid: false
+        errors:
+          - code: DSL_INVALID_FIELD

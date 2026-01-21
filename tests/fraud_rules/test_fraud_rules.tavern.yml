@@ -3,6 +3,7 @@ test_name: Правила фрода
 marks:
   - usefixtures:
       - admin_token
+      - generate_random_email
 
 stages:
   - name: "Валидация DSL (Valid)"
@@ -25,7 +26,7 @@ stages:
       headers:
         Authorization: "Bearer {admin_token}"
       json:
-        name: "Test High Amount"
+        name: "Test Rule {generate_random_email}"
         description: "Test rule"
         dslExpression: "amount > 999999"
         priority: 10
@@ -33,7 +34,7 @@ stages:
     response:
       status_code: 201
       json:
-        name: "Test High Amount"
+        name: "Test Rule {generate_random_email}"
       save:
         json:
           rule_id: id
@@ -48,4 +49,4 @@ stages:
       status_code: 200
       json:
         - id: "{rule_id}"
-          name: "Test High Amount"
+          name: "Test Rule {generate_random_email}"

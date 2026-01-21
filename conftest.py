@@ -86,6 +86,21 @@ def user_token(created_user):
 def user_auth_header(user_token):
     return {"Authorization": f"Bearer {user_token}"}
 
+@pytest.fixture
+def future_timestamp() -> str:
+    from datetime import datetime, timedelta, timezone
+    return (datetime.now(timezone.utc) + timedelta(minutes=10)).isoformat()
+
+@pytest.fixture
+def past_timestamp() -> str:
+    from datetime import datetime, timedelta, timezone
+    return (datetime.now(timezone.utc) - timedelta(days=365)).isoformat()
+
 @pytest.fixture(scope="function")
 def user_id(created_user):
     return created_user["user"]["id"] if created_user else "user_id_placeholder"
+
+@pytest.fixture(scope="function")
+def other_user_id():
+    import uuid
+    return str(uuid.uuid4())
