@@ -27,7 +27,3 @@ def pytest_tavern_beta_after_every_response(expected: Any, response: Any) -> Non
 @pytest.fixture
 def generate_random_email() -> str:
     return fake.unique.email()
-
-@pytest.fixture
-def generate_secondary_email() -> str:
-    return fake.unique.email()

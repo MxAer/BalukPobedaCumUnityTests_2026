@@ -3,7 +3,6 @@ test_name: Регистрация (Edge Cases)
 marks:
   - usefixtures:
       - generate_random_email
-      - generate_secondary_email
 
 stages:
   - name: "Проверить 422 Enum Parsing (0 -> Enum) /auth/register"
@@ -29,7 +28,7 @@ stages:
       url: "{BASE_URL}/auth/register"
       method: POST
       json:
-        email: "{generate_secondary_email}"
+        email: "{generate_random_email}"
         password: "V3rYH@rdP@$sW0Rd!1!11!!!"
         fullName: "Extra Field Tester"
         extra_field_should_be_ignored: "unexpected_value"

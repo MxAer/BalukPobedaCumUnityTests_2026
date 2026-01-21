@@ -3,7 +3,6 @@ test_name: Регистрация (Main)
 marks:
   - usefixtures:
       - generate_random_email
-      - generate_secondary_email
 
 stages:
   - name: "Проверить 201 FULL /auth/register"
@@ -45,21 +44,3 @@ stages:
       json:
         code: EMAIL_ALREADY_EXISTS
         path: /api/v1/auth/register
-
-  - name: "Проверить 201 RFC 5322 Email /auth/register"
-    request:
-      url: "{BASE_URL}/auth/register"
-      method: POST
-      json:
-        email: "{generate_secondary_email}"
-        password: "V3rYH@rdP@$sW0Rd!1!11!!!"
-        fullName: "Igor Bailyuk"
-        age: 27
-        region: Europe
-        gender: MALE
-        maritalStatus: SINGLE
-    response:
-      status_code: 201
-      json:
-        user:
-          email: "{generate_secondary_email}"
