@@ -1,0 +1,57 @@
+test_name: Управление пользователями (Admin)
+
+marks:
+  - usefixtures:
+      - admin_token
+      - generate_random_email
+
+stages:
+  - name: "Получить список пользователей"
+    request:
+      url: "{BASE_URL}/users"
+      method: GET
+      headers:
+        Authorization: "Bearer {admin_token}"
+      params:
+        page: 0
+        size: 10
+    response:
+      status_code: 200
+      json:
+        items: !anything
+        total: !anything
+
+  - name: "Создать пользователя админом"
+    request:
+      url: "{BASE_URL}/users"
+      method: POST
+      headers:
+        Authorization: "Bearer {admin_token}"
+      json:
+        email: "{generate_random_email}"
+        password: "Password123!"
+        fullName: "Admin Created User"
+        role: USER
+        age: 40
+        region: "EU"
+        gender: FEMALE
+        maritalStatus: DIVORCED
+    response:
+      status_code: 201
+      json:
+        email: "{generate_random_email}"
+      save:
+        json:
+          new_user_id: id
+
+  - name: "Получить пользователя по ID"
+    request:
+      url: "{BASE_URL}/users/{new_user_id}"
+      method: GET
+      headers:
+        Authorization: "Bearer {admin_token}"
+    response:
+      status_code: 200
+      json:
+        id: "{new_user_id}"
+        email: "{generate_random_email}"

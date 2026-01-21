@@ -1,0 +1,37 @@
+test_name: Профиль пользователя (/users/me)
+
+marks:
+  - usefixtures:
+      - user_token
+      - user_id
+
+stages:
+  - name: "Получить свой профиль"
+    request:
+      url: "{BASE_URL}/users/me"
+      method: GET
+      headers:
+        Authorization: "Bearer {user_token}"
+    response:
+      status_code: 200
+      json:
+        id: "{user_id}"
+
+  - name: "Обновить свой профиль"
+    request:
+      url: "{BASE_URL}/users/me"
+      method: PUT
+      headers:
+        Authorization: "Bearer {user_token}"
+      json:
+        fullName: "Updated Name"
+        age: 35
+        region: "US-NY"
+        gender: MALE
+        maritalStatus: MARRIED
+    response:
+      status_code: 200
+      json:
+        id: "{user_id}"
+        fullName: "Updated Name"
+        maritalStatus: MARRIED
