@@ -1,0 +1,46 @@
+test_name: Login Deactivated User
+
+marks:
+  - usefixtures:
+      - admin_token
+      - generate_random_email
+
+stages:
+  - name: "Register User to Deactivate"
+    request:
+      url: "{BASE_URL}/auth/register"
+      method: POST
+      json:
+        email: "{generate_random_email}"
+        password: "Password123!"
+        fullName: "To Be Deactivated"
+        age: 30
+        region: "US"
+        gender: MALE
+        maritalStatus: SINGLE
+    response:
+      status_code: 201
+      save:
+        json:
+          deactivated_user_id: user.id
+
+  - name: "Admin Deactivate User"
+    request:
+      url: "{BASE_URL}/users/{deactivated_user_id}"
+      method: DELETE
+      headers:
+        Authorization: "Bearer {admin_token}"
+    response:
+      status_code: 204
+
+  - name: "Login Deactivated User (Expect 423)"
+    request:
+      url: "{BASE_URL}/auth/login"
+      method: POST
+      json:
+        email: "{generate_random_email}"
+        password: "Password123!"
+    response:
+      status_code: 423
+      json:
+        code: USER_INACTIVE
