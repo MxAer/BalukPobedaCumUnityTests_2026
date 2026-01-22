@@ -3,6 +3,7 @@ test_name: Users Validation Scenarios
 marks:
   - usefixtures:
       - user_token
+      - user_email
 
 stages:
   - name: "User Update Role (403)"
@@ -56,7 +57,5 @@ stages:
         maritalStatus: SINGLE
     response:
       status_code: 200
-      verify_response_with:
-        function: tavern.testutils.helpers:validate_content
-        extra_kwargs:
-          expression: "response.json()['email'] != 'new@example.com'"
+      json:
+        email: "{user_email}"

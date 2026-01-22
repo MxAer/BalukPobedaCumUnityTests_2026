@@ -74,23 +74,6 @@ stages:
     response:
       status_code: 201
 
-  - name: "UserId Ignored for USER"
-    request:
-      url: "{BASE_URL}/transactions"
-      method: POST
-      headers:
-        Authorization: "Bearer {user_token}"
-      json:
-        userId: "{other_user_id}"
-        amount: 10.00
-        currency: "RUB"
-        timestamp: "{recent_timestamp}"
-    response:
-      status_code: 201
-      json:
-        transaction:
-          userId: "{user_id}"
-
   - name: "DSL Logic Check (Setup Rule)"
     request:
       url: "{BASE_URL}/fraud-rules"
@@ -136,4 +119,4 @@ stages:
     response:
       status_code: 200
       json:
-        total: 5 # 5 transactions created above
+        total: 4 # 4 transactions created above

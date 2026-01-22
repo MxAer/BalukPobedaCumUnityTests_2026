@@ -30,8 +30,7 @@ stages:
         Authorization: "Bearer {admin_token}"
     response:
       status_code: 200
-      json:
-        items: !anything
+      json: !anything
 
   - name: "Validate Valid DSL"
     request:

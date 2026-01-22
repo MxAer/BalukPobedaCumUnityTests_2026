@@ -11,6 +11,7 @@ fake = Faker()
 
 BASE_URL = os.getenv("BASE_URL", "http://localhost:8080/api/v1")
 
+
 def pytest_tavern_beta_before_every_request(request_args: MutableMapping):
     message = f"Request: {request_args['method']} {request_args['url']}"
 
@@ -31,12 +32,11 @@ def pytest_tavern_beta_after_every_response(expected: Any, response: Any) -> Non
 def generate_random_email() -> str:
     return fake.unique.email()
 
+
 @pytest.fixture(scope="session")
 def admin_credentials():
-    return {
-        "email": "admin@mail.ru",
-        "password": "123123123aA!"
-    }
+    return {"email": "admin@mail.ru", "password": "123123123aA!"}
+
 
 @pytest.fixture(scope="session")
 def admin_token(admin_credentials):
@@ -46,11 +46,13 @@ def admin_token(admin_credentials):
             return resp.json()["accessToken"]
     except requests.RequestException:
         pass
-    return "admin_token_placeholder" # Fallback if service is down during collect
+    return "admin_token_placeholder"  # Fallback if service is down during collect
+
 
 @pytest.fixture(scope="session")
 def admin_auth_header(admin_token):
     return {"Authorization": f"Bearer {admin_token}"}
+
 
 @pytest.fixture(scope="function")
 def created_user():
@@ -63,7 +65,7 @@ def created_user():
         "age": 25,
         "region": "US",
         "gender": "MALE",
-        "maritalStatus": "SINGLE"
+        "maritalStatus": "SINGLE",
     }
     try:
         resp = requests.post(f"{BASE_URL}/auth/register", json=payload)
@@ -72,45 +74,64 @@ def created_user():
             return {
                 "token": data["accessToken"],
                 "user": data["user"],
-                "password": password
+                "password": password,
             }
     except requests.RequestException:
         pass
     return None
 
+
+@pytest.fixture(scope="function")
+def user_email(created_user):
+    return created_user["user"]["email"] if created_user else "email_placeholder"
+
+
 @pytest.fixture(scope="function")
 def user_token(created_user):
     return created_user["token"] if created_user else "user_token_placeholder"
+
 
 @pytest.fixture(scope="function")
 def user_auth_header(user_token):
     return {"Authorization": f"Bearer {user_token}"}
 
+
 @pytest.fixture
 def future_timestamp() -> str:
     from datetime import datetime, timedelta, timezone
+
     return (datetime.now(timezone.utc) + timedelta(minutes=10)).isoformat()
+
 
 @pytest.fixture
 def past_timestamp() -> str:
     from datetime import datetime, timedelta, timezone
+
     return (datetime.now(timezone.utc) - timedelta(days=365)).isoformat()
+
 
 @pytest.fixture
 def old_timestamp() -> str:
     from datetime import datetime, timedelta, timezone
+
     return (datetime.now(timezone.utc) - timedelta(days=95)).isoformat()
+
 
 @pytest.fixture
 def recent_timestamp() -> str:
     from datetime import datetime, timedelta, timezone
+
     return (datetime.now(timezone.utc) - timedelta(days=1)).isoformat()
+
 
 @pytest.fixture(scope="function")
 def user_id(created_user):
     return created_user["user"]["id"] if created_user else "user_id_placeholder"
 
+
 @pytest.fixture(scope="function")
 def other_user_id():
     import uuid
+
     return str(uuid.uuid4())
+
