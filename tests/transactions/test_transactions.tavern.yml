@@ -3,7 +3,9 @@ test_name: Транзакции
 marks:
   - usefixtures:
       - user_token
+      - admin_token
       - user_id
+      - other_user_id
 
 stages:
   - name: "Создать транзакцию (Approved)"
@@ -39,3 +41,20 @@ stages:
         transaction:
           id: "{tx_id}"
           status: APPROVED
+
+  - name: "Попытка создать транзакцию для несуществующего пользователя"
+    request:
+      url: "{BASE_URL}/transactions"
+      method: POST
+      headers:
+        Authorization: "Bearer {admin_token}"
+      json:
+        userId: "{other_user_id}"
+        amount: 100.00
+        currency: "RUB"
+        timestamp: "2026-01-20T10:00:00Z"
+    response:
+      status_code: 404
+      json:
+        details:
+          userId: "{other_user_id}"
