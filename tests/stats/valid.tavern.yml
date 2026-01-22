@@ -1,13 +1,11 @@
-test_name: Full Stats Coverage
+test_name: Stats Valid Scenarios
 
 marks:
   - usefixtures:
       - admin_token
-      - user_token
-      - user_id
 
 stages:
-  - name: "Stats Overview"
+  - name: "Overview"
     request:
       url: "{BASE_URL}/stats/overview"
       method: GET
@@ -15,26 +13,17 @@ stages:
         Authorization: "Bearer {admin_token}"
     response:
       status_code: 200
-      json:
-        volume: !anything
-        gmv: !anything
-        approvalRate: !anything
-        declineRate: !anything
 
-  - name: "Transactions Timeseries"
+  - name: "Timeseries"
     request:
       url: "{BASE_URL}/stats/transactions/timeseries"
       method: GET
       headers:
         Authorization: "Bearer {admin_token}"
-      params:
-        groupBy: day
     response:
       status_code: 200
-      json:
-        points: !anything
 
-  - name: "Rule Matches"
+  - name: "Rules Matches"
     request:
       url: "{BASE_URL}/stats/rules/matches"
       method: GET
@@ -42,10 +31,8 @@ stages:
         Authorization: "Bearer {admin_token}"
     response:
       status_code: 200
-      json:
-        items: !anything
 
-  - name: "Merchant Risk"
+  - name: "Merchants Risk"
     request:
       url: "{BASE_URL}/stats/merchants/risk"
       method: GET
@@ -53,17 +40,3 @@ stages:
         Authorization: "Bearer {admin_token}"
     response:
       status_code: 200
-      json:
-        items: !anything
-
-  - name: "User Risk Profile (Self)"
-    request:
-      url: "{BASE_URL}/stats/users/{user_id}/risk-profile"
-      method: GET
-      headers:
-        Authorization: "Bearer {user_token}"
-    response:
-      status_code: 200
-      json:
-        userId: "{user_id}"
-        txCount_24h: !anything

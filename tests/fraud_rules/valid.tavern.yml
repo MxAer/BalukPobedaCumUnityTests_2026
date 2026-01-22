@@ -1,0 +1,47 @@
+test_name: Fraud Rules Valid Scenarios
+
+marks:
+  - usefixtures:
+      - admin_token
+      - generate_random_email
+
+stages:
+  - name: "Create Rule"
+    request:
+      url: "{BASE_URL}/fraud-rules"
+      method: POST
+      headers:
+        Authorization: "Bearer {admin_token}"
+      json:
+        name: "Valid Rule {generate_random_email}"
+        dslExpression: "amount > 100"
+        priority: 1
+    response:
+      status_code: 201
+      save:
+        json:
+          rule_id: id
+
+  - name: "List Rules"
+    request:
+      url: "{BASE_URL}/fraud-rules"
+      method: GET
+      headers:
+        Authorization: "Bearer {admin_token}"
+    response:
+      status_code: 200
+      json:
+        items: !anything
+
+  - name: "Validate Valid DSL"
+    request:
+      url: "{BASE_URL}/fraud-rules/validate"
+      method: POST
+      headers:
+        Authorization: "Bearer {admin_token}"
+      json:
+        dslExpression: "amount > 100 AND currency = 'RUB'"
+    response:
+      status_code: 200
+      json:
+        isValid: true

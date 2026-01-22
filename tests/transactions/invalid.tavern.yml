@@ -1,0 +1,105 @@
+test_name: Transactions Invalid Scenarios
+
+marks:
+  - usefixtures:
+      - admin_token
+      - user_token
+      - generate_random_email
+      - recent_timestamp
+
+stages:
+  - name: "Setup: Deactivate User"
+    request:
+      url: "{BASE_URL}/auth/register"
+      method: POST
+      json:
+        email: "{generate_random_email}"
+        password: "Password123!"
+        fullName: "To Deactivate"
+    response:
+      status_code: 201
+      save:
+        json:
+          deact_id: user.id
+          deact_token: accessToken
+
+  - name: "Deactivate"
+    request:
+      url: "{BASE_URL}/users/{deact_id}"
+      method: DELETE
+      headers:
+        Authorization: "Bearer {admin_token}"
+    response:
+      status_code: 204
+
+  - name: "Deactivated User Transaction (403)"
+    request:
+      url: "{BASE_URL}/transactions"
+      method: POST
+      headers:
+        Authorization: "Bearer {deact_token}"
+      json:
+        userId: "{deact_id}"
+        amount: 100.00
+        currency: "RUB"
+        timestamp: "{recent_timestamp}"
+    response:
+      status_code: 403
+
+  - name: "Setup: Create Other Transaction"
+    request:
+      url: "{BASE_URL}/transactions"
+      method: POST
+      headers:
+        Authorization: "Bearer {deact_token}" # Oops deact user can't create. Need another user.
+      # Actually let's use admin to create tx for another user
+      json:
+        userId: "{deact_id}" # Admin creates for deactivated user? Should work?
+        amount: 100.00
+        currency: "RUB"
+        timestamp: "{recent_timestamp}"
+    # Wait, can Admin create for deactivated? Spec says "403 ... or user deactivated".
+    # Assuming Admin can override or also restricted.
+    # Let's use a fresh ACTIVE user for "Other Transaction"
+    # I'll rely on a fresh registration.
+
+  - name: "Register Victim"
+    request:
+      url: "{BASE_URL}/auth/register"
+      method: POST
+      json:
+        email: "victim.{generate_random_email}"
+        password: "Password123!"
+        fullName: "Victim"
+    response:
+      status_code: 201
+      save:
+        json:
+          victim_id: user.id
+          victim_token: accessToken
+
+  - name: "Victim Creates Transaction"
+    request:
+      url: "{BASE_URL}/transactions"
+      method: POST
+      headers:
+        Authorization: "Bearer {victim_token}"
+      json:
+        userId: "{victim_id}"
+        amount: 10.00
+        currency: "RUB"
+        timestamp: "{recent_timestamp}"
+    response:
+      status_code: 201
+      save:
+        json:
+          victim_tx_id: transaction.id
+
+  - name: "User Access Other Transaction (403)"
+    request:
+      url: "{BASE_URL}/transactions/{victim_tx_id}"
+      method: GET
+      headers:
+        Authorization: "Bearer {user_token}"
+    response:
+      status_code: 403

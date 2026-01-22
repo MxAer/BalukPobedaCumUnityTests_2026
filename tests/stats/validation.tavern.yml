@@ -1,0 +1,18 @@
+test_name: Stats Validation Scenarios
+
+marks:
+  - usefixtures:
+      - admin_token
+
+stages:
+  - name: "Overview Invalid Date Range (422)"
+    request:
+      url: "{BASE_URL}/stats/overview"
+      method: GET
+      headers:
+        Authorization: "Bearer {admin_token}"
+      params:
+        from: "2026-01-01T00:00:00Z"
+        to: "2025-01-01T00:00:00Z" # from > to
+    response:
+      status_code: 422

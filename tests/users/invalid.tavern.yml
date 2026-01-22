@@ -1,0 +1,36 @@
+test_name: Users Invalid Scenarios
+
+marks:
+  - usefixtures:
+      - user_token
+      - admin_token
+      - generate_random_email
+
+stages:
+  - name: "Setup: Admin Create Another User"
+    request:
+      url: "{BASE_URL}/users"
+      method: POST
+      headers:
+        Authorization: "Bearer {admin_token}"
+      json:
+        email: "{generate_random_email}"
+        password: "Password123!"
+        fullName: "Another User"
+        role: USER
+    response:
+      status_code: 201
+      save:
+        json:
+          other_user_id: id
+
+  - name: "User Get Other Profile (403)"
+    request:
+      url: "{BASE_URL}/users/{other_user_id}"
+      method: GET
+      headers:
+        Authorization: "Bearer {user_token}"
+    response:
+      status_code: 403
+      json:
+        code: FORBIDDEN

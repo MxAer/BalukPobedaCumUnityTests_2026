@@ -1,0 +1,62 @@
+test_name: Users Validation Scenarios
+
+marks:
+  - usefixtures:
+      - user_token
+
+stages:
+  - name: "User Update Role (403)"
+    request:
+      url: "{BASE_URL}/users/me"
+      method: PUT
+      headers:
+        Authorization: "Bearer {user_token}"
+      json:
+        fullName: "Hacker"
+        age: 20
+        region: "US"
+        gender: MALE
+        maritalStatus: SINGLE
+        role: ADMIN
+    response:
+      status_code: 403
+      json:
+        code: FORBIDDEN
+
+  - name: "User Update Active (403)"
+    request:
+      url: "{BASE_URL}/users/me"
+      method: PUT
+      headers:
+        Authorization: "Bearer {user_token}"
+      json:
+        fullName: "Suicidal"
+        age: 20
+        region: "US"
+        gender: MALE
+        maritalStatus: SINGLE
+        isActive: false
+    response:
+      status_code: 403
+      json:
+        code: FORBIDDEN
+
+  - name: "User Update Email Ignored"
+    request:
+      url: "{BASE_URL}/users/me"
+      method: PUT
+      headers:
+        Authorization: "Bearer {user_token}"
+      json:
+        fullName: "Email Changer"
+        email: "new@example.com"
+        age: 20
+        region: "US"
+        gender: MALE
+        maritalStatus: SINGLE
+    response:
+      status_code: 200
+      verify_response_with:
+        function: tavern.testutils.helpers:validate_content
+        extra_kwargs:
+          expression: "response.json()['email'] != 'new@example.com'"

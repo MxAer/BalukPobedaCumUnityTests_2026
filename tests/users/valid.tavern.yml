@@ -1,0 +1,114 @@
+test_name: Users Valid Scenarios
+
+marks:
+  - usefixtures:
+      - user_token
+      - user_id
+      - admin_token
+      - generate_random_email
+
+stages:
+  - name: "Get Me"
+    request:
+      url: "{BASE_URL}/users/me"
+      method: GET
+      headers:
+        Authorization: "Bearer {user_token}"
+    response:
+      status_code: 200
+      json:
+        id: "{user_id}"
+
+  - name: "Update Me"
+    request:
+      url: "{BASE_URL}/users/me"
+      method: PUT
+      headers:
+        Authorization: "Bearer {user_token}"
+      json:
+        fullName: "Updated Name"
+        age: 35
+        region: "US-NY"
+        gender: MALE
+        maritalStatus: MARRIED
+    response:
+      status_code: 200
+      json:
+        fullName: "Updated Name"
+
+  - name: "Admin Create User"
+    request:
+      url: "{BASE_URL}/users"
+      method: POST
+      headers:
+        Authorization: "Bearer {admin_token}"
+      json:
+        email: "{generate_random_email}"
+        password: "Password123!"
+        fullName: "Admin Created"
+        role: USER
+        age: 25
+        region: "EU"
+        gender: FEMALE
+        maritalStatus: SINGLE
+    response:
+      status_code: 201
+      json:
+        email: "{generate_random_email}"
+      save:
+        json:
+          created_id: id
+
+  - name: "Admin Get User"
+    request:
+      url: "{BASE_URL}/users/{created_id}"
+      method: GET
+      headers:
+        Authorization: "Bearer {admin_token}"
+    response:
+      status_code: 200
+      json:
+        id: "{created_id}"
+
+  - name: "Admin Update User (Role/Active)"
+    request:
+      url: "{BASE_URL}/users/{created_id}"
+      method: PUT
+      headers:
+        Authorization: "Bearer {admin_token}"
+      json:
+        fullName: "Admin Updated"
+        role: ADMIN
+        isActive: false
+        age: 26
+        region: "EU"
+        gender: FEMALE
+        maritalStatus: SINGLE
+    response:
+      status_code: 200
+      json:
+        role: ADMIN
+        isActive: false
+
+  - name: "Admin List Users"
+    request:
+      url: "{BASE_URL}/users"
+      method: GET
+      headers:
+        Authorization: "Bearer {admin_token}"
+      params:
+        page: 0
+        size: 10
+    response:
+      status_code: 200
+      json:
+        items: !anything
+
+  - name: "Admin Deactivate User (204)"
+    request:
+      url: "{BASE_URL}/users/{created_id}"
+      method: DELETE
+      headers:
+        Authorization: "Bearer {admin_token}"
+    response:
+      status_code: 204
