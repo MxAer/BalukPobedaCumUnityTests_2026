@@ -69,3 +69,79 @@ stages:
         details:
           userId: "{other_user_id}"
 
+  - name: "Validation: invalid ip addr"
+    request:
+      url: "{BASE_URL}/transactions"
+      method: POST
+      headers:
+        Authorization: "Bearer {user_token}"
+      json:
+        userId: "{user_id}"
+        amount: 100.00
+        currency: "RUB"
+        timestamp: "2026-01-20T10:00:00Z"
+        ipAddress: "256.1.1.1"
+    response:
+      status_code: 422
+
+  - name: "Validation: invalid mcc"
+    request:
+      url: "{BASE_URL}/transactions"
+      method: POST
+      headers:
+        Authorization: "Bearer {user_token}"
+      json:
+        userId: "{user_id}"
+        amount: 100.00
+        currency: "RUB"
+        timestamp: "2026-01-20T10:00:00Z"
+        merchantCategoryCode: "asdf"
+    response:
+      status_code: 422
+
+  - name: "Validation: latitude without longitude"
+    request:
+      url: "{BASE_URL}/transactions"
+      method: POST
+      headers:
+        Authorization: "Bearer {user_token}"
+      json:
+        userId: "{user_id}"
+        amount: 100.00
+        currency: "RUB"
+        timestamp: "2026-01-20T10:00:00Z"
+        location:
+          latitude: 55.7558
+    response:
+      status_code: 422
+
+  - name: "Validation: longitude without latitude"
+    request:
+      url: "{BASE_URL}/transactions"
+      method: POST
+      headers:
+        Authorization: "Bearer {user_token}"
+      json:
+        userId: "{user_id}"
+        amount: 100.00
+        currency: "RUB"
+        timestamp: "2026-01-20T10:00:00Z"
+        location:
+          longitude: 37.6173
+    response:
+      status_code: 422
+
+  - name: "Validation: invalid channel"
+    request:
+      url: "{BASE_URL}/transactions"
+      method: POST
+      headers:
+        Authorization: "Bearer {user_token}"
+      json:
+        userId: "{user_id}"
+        amount: 100.00
+        currency: "RUB"
+        timestamp: "2026-01-20T10:00:00Z"
+        channel: "smth"
+    response:
+      status_code: 422
