@@ -46,23 +46,6 @@ stages:
     response:
       status_code: 403
 
-  - name: "Setup: Create Other Transaction"
-    request:
-      url: "{BASE_URL}/transactions"
-      method: POST
-      headers:
-        Authorization: "Bearer {deact_token}" # Oops deact user can't create. Need another user.
-      # Actually let's use admin to create tx for another user
-      json:
-        userId: "{deact_id}" # Admin creates for deactivated user? Should work?
-        amount: 100.00
-        currency: "RUB"
-        timestamp: "{recent_timestamp}"
-    # Wait, can Admin create for deactivated? Spec says "403 ... or user deactivated".
-    # Assuming Admin can override or also restricted.
-    # Let's use a fresh ACTIVE user for "Other Transaction"
-    # I'll rely on a fresh registration.
-
   - name: "Register Victim"
     request:
       url: "{BASE_URL}/auth/register"
@@ -103,3 +86,28 @@ stages:
         Authorization: "Bearer {user_token}"
     response:
       status_code: 403
+
+  - name: "Create Transaction No Token (401)"
+    request:
+      url: "{BASE_URL}/transactions"
+      method: POST
+      # No header
+      json:
+        userId: "{victim_id}"
+        amount: 100.00
+        currency: "RUB"
+        timestamp: "{recent_timestamp}"
+    response:
+      status_code: 401
+      json:
+        code: UNAUTHORIZED
+
+  - name: "Get Transaction No Token (401)"
+    request:
+      url: "{BASE_URL}/transactions/{victim_tx_id}"
+      method: GET
+      # No header
+    response:
+      status_code: 401
+      json:
+        code: UNAUTHORIZED

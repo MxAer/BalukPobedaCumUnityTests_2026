@@ -1,0 +1,22 @@
+test_name: Stats Invalid Scenarios
+
+stages:
+  - name: "Get Overview No Token (401)"
+    request:
+      url: "{BASE_URL}/stats/overview"
+      method: GET
+      # No header
+    response:
+      status_code: 401
+      json:
+        code: UNAUTHORIZED
+
+  - name: "Get Timeseries No Token (401)"
+    request:
+      url: "{BASE_URL}/stats/transactions/timeseries"
+      method: GET
+      # No header
+    response:
+      status_code: 401
+      json:
+        code: UNAUTHORIZED
