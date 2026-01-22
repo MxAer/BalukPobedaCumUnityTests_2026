@@ -1,0 +1,41 @@
+test_name: Transaction Amount Rounding
+
+marks:
+  - usefixtures:
+      - user_token
+      - user_id
+
+stages:
+  - name: "Create Transaction with 3 decimal places (Round Up)"
+    request:
+      url: "{BASE_URL}/transactions"
+      method: POST
+      headers:
+        Authorization: "Bearer {user_token}"
+      json:
+        userId: "{user_id}"
+        amount: 100.125
+        currency: "RUB"
+        timestamp: "2026-01-20T10:00:00Z"
+    response:
+      status_code: 201
+      json:
+        transaction:
+          amount: 100.13
+
+  - name: "Create Transaction with 3 decimal places (Round Down)"
+    request:
+      url: "{BASE_URL}/transactions"
+      method: POST
+      headers:
+        Authorization: "Bearer {user_token}"
+      json:
+        userId: "{user_id}"
+        amount: 100.124
+        currency: "RUB"
+        timestamp: "2026-01-20T10:05:00Z"
+    response:
+      status_code: 201
+      json:
+        transaction:
+          amount: 100.12

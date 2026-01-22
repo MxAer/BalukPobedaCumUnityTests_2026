@@ -1,0 +1,56 @@
+test_name: Transaction Listing Defaults
+
+marks:
+  - usefixtures:
+      - user_token
+      - user_id
+      - old_timestamp
+      - recent_timestamp
+
+stages:
+  - name: "Create Old Transaction (95 days ago)"
+    request:
+      url: "{BASE_URL}/transactions"
+      method: POST
+      headers:
+        Authorization: "Bearer {user_token}"
+      json:
+        userId: "{user_id}"
+        amount: 100.00
+        currency: "RUB"
+        timestamp: "{old_timestamp}"
+    response:
+      status_code: 201
+      save:
+        json:
+          old_tx_id: transaction.id
+
+  - name: "Create Recent Transaction (1 day ago)"
+    request:
+      url: "{BASE_URL}/transactions"
+      method: POST
+      headers:
+        Authorization: "Bearer {user_token}"
+      json:
+        userId: "{user_id}"
+        amount: 100.00
+        currency: "RUB"
+        timestamp: "{recent_timestamp}"
+    response:
+      status_code: 201
+      save:
+        json:
+          recent_tx_id: transaction.id
+
+  - name: "List Transactions (Default Filters)"
+    request:
+      url: "{BASE_URL}/transactions"
+      method: GET
+      headers:
+        Authorization: "Bearer {user_token}"
+    response:
+      status_code: 200
+      json:
+        total: 1
+        items:
+          - id: "{recent_tx_id}"

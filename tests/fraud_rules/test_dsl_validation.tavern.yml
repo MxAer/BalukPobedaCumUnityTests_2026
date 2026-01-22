@@ -63,7 +63,7 @@ stages:
         errors:
           - code: DSL_INVALID_OPERATOR
 
-  - name: "DSL Invalid Field"
+  - name: "DSL Invalid Field (unknown)"
     request:
       url: "{BASE_URL}/fraud-rules/validate"
       method: POST
@@ -71,6 +71,36 @@ stages:
         Authorization: "Bearer {admin_token}"
       json:
         dslExpression: "unknownField > 10"
+    response:
+      status_code: 200
+      json:
+        isValid: false
+        errors:
+          - code: DSL_INVALID_FIELD
+
+  - name: "DSL Invalid Field (timestamp removed in v1.0.7)"
+    request:
+      url: "{BASE_URL}/fraud-rules/validate"
+      method: POST
+      headers:
+        Authorization: "Bearer {admin_token}"
+      json:
+        dslExpression: "timestamp > '2025-01-01T00:00:00Z'"
+    response:
+      status_code: 200
+      json:
+        isValid: false
+        errors:
+          - code: DSL_INVALID_FIELD
+
+  - name: "DSL Invalid Field (metadata removed in v1.0.7)"
+    request:
+      url: "{BASE_URL}/fraud-rules/validate"
+      method: POST
+      headers:
+        Authorization: "Bearer {admin_token}"
+      json:
+        dslExpression: "metadata = 'some_val'"
     response:
       status_code: 200
       json:

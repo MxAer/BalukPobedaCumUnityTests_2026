@@ -96,6 +96,16 @@ def past_timestamp() -> str:
     from datetime import datetime, timedelta, timezone
     return (datetime.now(timezone.utc) - timedelta(days=365)).isoformat()
 
+@pytest.fixture
+def old_timestamp() -> str:
+    from datetime import datetime, timedelta, timezone
+    return (datetime.now(timezone.utc) - timedelta(days=95)).isoformat()
+
+@pytest.fixture
+def recent_timestamp() -> str:
+    from datetime import datetime, timedelta, timezone
+    return (datetime.now(timezone.utc) - timedelta(days=1)).isoformat()
+
 @pytest.fixture(scope="function")
 def user_id(created_user):
     return created_user["user"]["id"] if created_user else "user_id_placeholder"
