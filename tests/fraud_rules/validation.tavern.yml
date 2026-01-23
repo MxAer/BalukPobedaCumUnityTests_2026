@@ -1,0 +1,65 @@
+test_name: Fraud Rules Validation Scenarios
+
+marks:
+  - usefixtures:
+      - admin_token
+
+stages:
+  - name: "Validate Invalid Operator"
+    request:
+      url: "{BASE_URL}/fraud-rules/validate"
+      method: POST
+      headers:
+        Authorization: "Bearer {admin_token}"
+      json:
+        dslExpression: "currency > 'RUB'"
+    response:
+      status_code: 200
+      json:
+        isValid: false
+        errors:
+          - code: DSL_INVALID_OPERATOR
+
+  - name: "Validate Unknown Field"
+    request:
+      url: "{BASE_URL}/fraud-rules/validate"
+      method: POST
+      headers:
+        Authorization: "Bearer {admin_token}"
+      json:
+        dslExpression: "unknown > 10"
+    response:
+      status_code: 200
+      json:
+        isValid: false
+        errors:
+          - code: DSL_INVALID_FIELD
+
+  - name: "Validate Removed Field (Timestamp)"
+    request:
+      url: "{BASE_URL}/fraud-rules/validate"
+      method: POST
+      headers:
+        Authorization: "Bearer {admin_token}"
+      json:
+        dslExpression: "timestamp > '2025-01-01'"
+    response:
+      status_code: 200
+      json:
+        isValid: false
+        errors:
+          - code: DSL_INVALID_FIELD
+
+  - name: "Validate Normalization"
+    request:
+      url: "{BASE_URL}/fraud-rules/validate"
+      method: POST
+      headers:
+        Authorization: "Bearer {admin_token}"
+      json:
+        dslExpression: "amount>100"
+    response:
+      status_code: 200
+      json:
+        isValid: true
+        normalizedExpression: "amount > 100"

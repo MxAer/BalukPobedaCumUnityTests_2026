@@ -1,0 +1,66 @@
+test_name: Auth Validation Scenarios
+
+marks:
+  - usefixtures:
+      - generate_random_email
+
+stages:
+  - name: "Register 400 Bad JSON"
+    request:
+      url: "{BASE_URL}/auth/register"
+      method: POST
+      headers:
+        content-type: application/json
+      data: '{{"bad": "json"'
+    response:
+      status_code: 400
+      json:
+        code: BAD_REQUEST
+
+  - name: "Register 422 Missing Email"
+    request:
+      url: "{BASE_URL}/auth/register"
+      method: POST
+      json:
+        password: "Password123!"
+        fullName: "No Email"
+    response:
+      status_code: 422
+      json:
+        code: VALIDATION_FAILED
+
+  - name: "Register 422 Email as integer"
+    request:
+      url: "{BASE_URL}/auth/register"
+      method: POST
+      json:
+        email: 1321321321321
+        password: "Password123!"
+        fullName: "No Email"
+    response:
+      status_code: 422
+      json:
+        code: VALIDATION_FAILED
+
+  - name: "Register 422 Invalid Email"
+    request:
+      url: "{BASE_URL}/auth/register"
+      method: POST
+      json:
+        email: "invalid-email"
+        password: "Password123!"
+        fullName: "Invalid Email"
+    response:
+      status_code: 422
+
+  - name: "Register 422 Enum 0"
+    request:
+      url: "{BASE_URL}/auth/register"
+      method: POST
+      json:
+        email: "{generate_random_email}"
+        password: "Password123!"
+        fullName: "Enum Tester"
+        gender: 0
+    response:
+      status_code: 422

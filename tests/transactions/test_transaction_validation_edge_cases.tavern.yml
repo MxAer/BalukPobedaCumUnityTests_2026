@@ -1,0 +1,147 @@
+test_name: Transaction Validation Edge Cases
+
+marks:
+  - usefixtures:
+      - user_token
+      - user_id
+      - future_timestamp
+      - past_timestamp
+      - other_user_id
+
+stages:
+  - name: "Validation: Timestamp in Future (> 5 min)"
+    request:
+      url: "{BASE_URL}/transactions"
+      method: POST
+      headers:
+        Authorization: "Bearer {user_token}"
+      json:
+        userId: "{user_id}"
+        amount: 100.00
+        currency: "RUB"
+        timestamp: "{future_timestamp}"
+    response:
+      status_code: 422
+
+  - name: "Validation: Timestamp in Distant Past"
+    request:
+      url: "{BASE_URL}/transactions"
+      method: POST
+      headers:
+        Authorization: "Bearer {user_token}"
+      json:
+        userId: "{user_id}"
+        amount: 100.00
+        currency: "RUB"
+        timestamp: "{past_timestamp}"
+    response:
+      status_code: 201
+
+  - name: "Validation: Extra Fields Ignored"
+    request:
+      url: "{BASE_URL}/transactions"
+      method: POST
+      headers:
+        Authorization: "Bearer {user_token}"
+      json:
+        userId: "{user_id}"
+        amount: 100.00
+        currency: "RUB"
+        timestamp: "2026-01-20T10:00:00Z"
+        extra_field: "should be ignored"
+    response:
+      status_code: 201
+
+  - name: "Validation: other User ID for USER Role is not allowed"
+    request:
+      url: "{BASE_URL}/transactions"
+      method: POST
+      headers:
+        Authorization: "Bearer {user_token}"
+      json:
+        userId: "{other_user_id}" # Sending random UUID
+        amount: 100.00
+        currency: "RUB"
+        timestamp: "2026-01-20T10:00:00Z"
+    response:
+      status_code: 403
+      # json:
+      #   details:
+      #     userId: "{other_user_id}"
+
+  - name: "Validation: invalid ip addr"
+    request:
+      url: "{BASE_URL}/transactions"
+      method: POST
+      headers:
+        Authorization: "Bearer {user_token}"
+      json:
+        userId: "{user_id}"
+        amount: 100.00
+        currency: "RUB"
+        timestamp: "2026-01-20T10:00:00Z"
+        ipAddress: "256.1.1.1"
+    response:
+      status_code: 422
+
+  - name: "Validation: invalid mcc"
+    request:
+      url: "{BASE_URL}/transactions"
+      method: POST
+      headers:
+        Authorization: "Bearer {user_token}"
+      json:
+        userId: "{user_id}"
+        amount: 100.00
+        currency: "RUB"
+        timestamp: "2026-01-20T10:00:00Z"
+        merchantCategoryCode: "asdf"
+    response:
+      status_code: 422
+
+  - name: "Validation: latitude without longitude"
+    request:
+      url: "{BASE_URL}/transactions"
+      method: POST
+      headers:
+        Authorization: "Bearer {user_token}"
+      json:
+        userId: "{user_id}"
+        amount: 100.00
+        currency: "RUB"
+        timestamp: "2026-01-20T10:00:00Z"
+        location:
+          latitude: 55.7558
+    response:
+      status_code: 422
+
+  - name: "Validation: longitude without latitude"
+    request:
+      url: "{BASE_URL}/transactions"
+      method: POST
+      headers:
+        Authorization: "Bearer {user_token}"
+      json:
+        userId: "{user_id}"
+        amount: 100.00
+        currency: "RUB"
+        timestamp: "2026-01-20T10:00:00Z"
+        location:
+          longitude: 37.6173
+    response:
+      status_code: 422
+
+  - name: "Validation: invalid channel"
+    request:
+      url: "{BASE_URL}/transactions"
+      method: POST
+      headers:
+        Authorization: "Bearer {user_token}"
+      json:
+        userId: "{user_id}"
+        amount: 100.00
+        currency: "RUB"
+        timestamp: "2026-01-20T10:00:00Z"
+        channel: "smth"
+    response:
+      status_code: 422

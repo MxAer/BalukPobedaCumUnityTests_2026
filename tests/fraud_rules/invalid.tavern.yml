@@ -1,0 +1,54 @@
+test_name: Fraud Rules Invalid Scenarios
+
+marks:
+  - usefixtures:
+      - admin_token
+      - generate_random_email
+
+stages:
+  - name: "Create Rule"
+    request:
+      url: "{BASE_URL}/fraud-rules"
+      method: POST
+      headers:
+        Authorization: "Bearer {admin_token}"
+      json:
+        name: "Conflict Rule {generate_random_email}"
+        dslExpression: "amount > 100"
+    response:
+      status_code: 201
+      save:
+        json:
+          rule_id: id
+
+  - name: "Create Conflict Rule (409)"
+    request:
+      url: "{BASE_URL}/fraud-rules"
+      method: POST
+      headers:
+        Authorization: "Bearer {admin_token}"
+      json:
+        name: "Conflict Rule {generate_random_email}"
+        dslExpression: "amount > 200"
+    response:
+      status_code: 409
+
+  - name: "List Rules No Token (401)"
+    request:
+      url: "{BASE_URL}/fraud-rules"
+      method: GET
+      # No header
+    response:
+      status_code: 401
+      json:
+        code: UNAUTHORIZED
+
+  - name: "Get Rule No Token (401)"
+    request:
+      url: "{BASE_URL}/fraud-rules/{rule_id}"
+      method: GET
+      # No header
+    response:
+      status_code: 401
+      json:
+        code: UNAUTHORIZED

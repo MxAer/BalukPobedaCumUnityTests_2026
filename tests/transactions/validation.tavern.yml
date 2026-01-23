@@ -1,0 +1,37 @@
+test_name: Transactions Validation Scenarios
+
+marks:
+  - usefixtures:
+      - user_token
+      - user_id
+      - future_timestamp
+
+stages:
+  - name: "Future Timestamp (422)"
+    request:
+      url: "{BASE_URL}/transactions"
+      method: POST
+      headers:
+        Authorization: "Bearer {user_token}"
+      json:
+        userId: "{user_id}"
+        amount: 100.00
+        currency: "RUB"
+        timestamp: "{future_timestamp}"
+    response:
+      status_code: 422
+      json:
+        code: VALIDATION_FAILED
+
+  - name: "Missing Amount (422)"
+    request:
+      url: "{BASE_URL}/transactions"
+      method: POST
+      headers:
+        Authorization: "Bearer {user_token}"
+      json:
+        userId: "{user_id}"
+        currency: "RUB"
+        timestamp: "2026-01-20T10:00:00Z"
+    response:
+      status_code: 422

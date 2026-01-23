@@ -1,0 +1,42 @@
+test_name: Stats Valid Scenarios
+
+marks:
+  - usefixtures:
+      - admin_token
+
+stages:
+  - name: "Overview"
+    request:
+      url: "{BASE_URL}/stats/overview"
+      method: GET
+      headers:
+        Authorization: "Bearer {admin_token}"
+    response:
+      status_code: 200
+
+  - name: "Timeseries"
+    request:
+      url: "{BASE_URL}/stats/transactions/timeseries"
+      method: GET
+      headers:
+        Authorization: "Bearer {admin_token}"
+    response:
+      status_code: 200
+
+  - name: "Rules Matches"
+    request:
+      url: "{BASE_URL}/stats/rules/matches"
+      method: GET
+      headers:
+        Authorization: "Bearer {admin_token}"
+    response:
+      status_code: 200
+
+  - name: "Merchants Risk"
+    request:
+      url: "{BASE_URL}/stats/merchants/risk"
+      method: GET
+      headers:
+        Authorization: "Bearer {admin_token}"
+    response:
+      status_code: 200
