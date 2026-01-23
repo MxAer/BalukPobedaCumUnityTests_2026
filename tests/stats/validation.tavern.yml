@@ -16,3 +16,173 @@ stages:
         to: "2025-01-01T00:00:00Z" # from > to
     response:
       status_code: 422
+
+  - name: "Overview to-from > 90days (422)"
+    request:
+      url: "{BASE_URL}/stats/overview"
+      method: GET
+      headers:
+        Authorization: "Bearer {admin_token}"
+      params:
+        from: "2026-01-01T00:00:00Z"
+        to: "2026-05-01T00:00:00Z"
+    response:
+      status_code: 422
+
+  - name: "Timeseries Invalid Date Range (422)"
+    request:
+      url: "{BASE_URL}/stats/transactions/timeseries"
+      method: GET
+      headers:
+        Authorization: "Bearer {admin_token}"
+      params:
+        from: "2026-01-01T00:00:00Z"
+        to: "2025-01-01T00:00:00Z" # from > to
+    response:
+      status_code: 422
+
+  - name: "Timeseries to-from > 90days (422)"
+    request:
+      url: "{BASE_URL}/stats/transactions/timeseries"
+      method: GET
+      headers:
+        Authorization: "Bearer {admin_token}"
+      params:
+        from: "2026-01-01T00:00:00Z"
+        to: "2026-05-01T00:00:00Z"
+    response:
+      status_code: 422
+
+  - name: "Timeseries invalid channel (422)"
+    request:
+      url: "{BASE_URL}/stats/transactions/timeseries"
+      method: GET
+      headers:
+        Authorization: "Bearer {admin_token}"
+      params:
+        channel: "smth"
+    response:
+      status_code: 422
+
+  - name: "Timeseries invalid timezone (422)"
+    request:
+      url: "{BASE_URL}/stats/transactions/timeseries"
+      method: GET
+      headers:
+        Authorization: "Bearer {admin_token}"
+      params:
+        timezone: "Europe/SomethingWrong"
+    response:
+      status_code: 422
+
+  - name: "Timeseries invalid groupBy (422)"
+    request:
+      url: "{BASE_URL}/stats/transactions/timeseries"
+      method: GET
+      headers:
+        Authorization: "Bearer {admin_token}"
+      params:
+        groupBy: "smth"
+    response:
+      status_code: 422
+
+  - name: "Rules Invalid Date Range (422)"
+    request:
+      url: "{BASE_URL}/stats/rules/matches"
+      method: GET
+      headers:
+        Authorization: "Bearer {admin_token}"
+      params:
+        from: "2026-01-01T00:00:00Z"
+        to: "2025-01-01T00:00:00Z" # from > to
+    response:
+      status_code: 422
+
+  - name: "Rules to-from > 90days (422)"
+    request:
+      url: "{BASE_URL}/stats/rules/matches"
+      method: GET
+      headers:
+        Authorization: "Bearer {admin_token}"
+      params:
+        from: "2026-01-01T00:00:00Z"
+        to: "2026-05-01T00:00:00Z"
+    response:
+      status_code: 422
+
+  - name: "Rules invalid top (bigger than allowed) (422)"
+    request:
+      url: "{BASE_URL}/stats/rules/matches"
+      method: GET
+      headers:
+        Authorization: "Bearer {admin_token}"
+      params:
+        top: 101
+    response:
+      status_code: 422
+
+  - name: "Rules invalid top (smaller than allowed) (422)"
+    request:
+      url: "{BASE_URL}/stats/rules/matches"
+      method: GET
+      headers:
+        Authorization: "Bearer {admin_token}"
+      params:
+        top: 0
+    response:
+      status_code: 422
+
+  - name: "Merchant Invalid Date Range (422)"
+    request:
+      url: "{BASE_URL}/stats/merchants/risk"
+      method: GET
+      headers:
+        Authorization: "Bearer {admin_token}"
+      params:
+        from: "2026-01-01T00:00:00Z"
+        to: "2025-01-01T00:00:00Z" # from > to
+    response:
+      status_code: 422
+
+  - name: "Merchants to-from > 90days (422)"
+    request:
+      url: "{BASE_URL}/stats/merchants/risk"
+      method: GET
+      headers:
+        Authorization: "Bearer {admin_token}"
+      params:
+        from: "2026-01-01T00:00:00Z"
+        to: "2026-05-01T00:00:00Z"
+    response:
+      status_code: 422
+
+  - name: "Merchants invalid top (bigger than allowed) (422)"
+    request:
+      url: "{BASE_URL}/stats/merchants/risk"
+      method: GET
+      headers:
+        Authorization: "Bearer {admin_token}"
+      params:
+        top: 201
+    response:
+      status_code: 422
+
+  - name: "Merchants invalid top (smaller than allowed) (422)"
+    request:
+      url: "{BASE_URL}/stats/merchants/risk"
+      method: GET
+      headers:
+        Authorization: "Bearer {admin_token}"
+      params:
+        top: 0
+    response:
+      status_code: 422
+
+  - name: "Risk profile invalid userid (422)"
+    request:
+      url: "{BASE_URL}/stats/users/someshit/risk-profile"
+      method: GET
+      headers:
+        Authorization: "Bearer {admin_token}"
+    response:
+      status_code: 422
