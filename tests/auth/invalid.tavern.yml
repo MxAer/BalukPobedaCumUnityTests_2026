@@ -53,6 +53,7 @@ stages:
       status_code: 201
       save:
         json:
+          deact_token: accessToken
           deact_id: user.id
 
   - name: "Admin Deactivate"
@@ -75,3 +76,12 @@ stages:
       status_code: 423
       json:
         code: USER_INACTIVE
+
+  - name: "Profile Deactivated Check"
+    request:
+      url: "{BASE_URL}/users/me"
+      method: GET
+      headers:
+        Authorization: "Bearer {deact_token}"
+    response:
+      status_code: 200

@@ -19,6 +19,17 @@ stages:
       json:
         id: "{user_id}"
 
+  - name: "Get Me by id"
+    request:
+      url: "{BASE_URL}/users/{user_id}"
+      method: GET
+      headers:
+        Authorization: "Bearer {user_token}"
+    response:
+      status_code: 200
+      json:
+        id: "{user_id}"
+
   - name: "Update Me"
     request:
       url: "{BASE_URL}/users/me"
@@ -35,6 +46,23 @@ stages:
       status_code: 200
       json:
         fullName: "Updated Name"
+
+  - name: "Update Me by id"
+    request:
+      url: "{BASE_URL}/users/{user_id}"
+      method: PUT
+      headers:
+        Authorization: "Bearer {user_token}"
+      json:
+        fullName: "Updated Name 2"
+        age: 35
+        region: "US-NY"
+        gender: MALE
+        maritalStatus: MARRIED
+    response:
+      status_code: 200
+      json:
+        fullName: "Updated Name 2"
 
   - name: "Admin Create User"
     request:
@@ -105,6 +133,15 @@ stages:
         items: !anything
 
   - name: "Admin Deactivate User (204)"
+    request:
+      url: "{BASE_URL}/users/{created_id}"
+      method: DELETE
+      headers:
+        Authorization: "Bearer {admin_token}"
+    response:
+      status_code: 204
+
+  - name: "Admin Deactivate User (204) idempotency"
     request:
       url: "{BASE_URL}/users/{created_id}"
       method: DELETE

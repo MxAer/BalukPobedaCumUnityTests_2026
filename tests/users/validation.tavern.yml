@@ -60,6 +60,31 @@ stages:
       json:
         code: FORBIDDEN
 
+  - name: "User List Users"
+    request:
+      url: "{BASE_URL}/users"
+      method: GET
+      headers:
+        Authorization: "Bearer {user_token}"
+      params:
+        page: 0
+        size: 10
+    response:
+      status_code: 403
+      json:
+        code: FORBIDDEN
+
+  - name: "User Create Users"
+    request:
+      url: "{BASE_URL}/users"
+      method: POST
+      headers:
+        Authorization: "Bearer {user_token}"
+    response:
+      status_code: 403
+      json:
+        code: FORBIDDEN
+
   - name: "User Update Email Ignored"
     request:
       url: "{BASE_URL}/users/me"
