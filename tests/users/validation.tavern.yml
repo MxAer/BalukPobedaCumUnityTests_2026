@@ -24,6 +24,24 @@ stages:
       json:
         code: FORBIDDEN
 
+  - name: "User Update Active (422)"
+    request:
+      url: "{BASE_URL}/users/me"
+      method: PUT
+      headers:
+        Authorization: "Bearer {user_token}"
+      json:
+        fullName: "Suicidal"
+        age: 20
+        region: "US"
+        gender: MALE
+        maritalStatus: SINGLE
+        isActive: 0
+    response:
+      status_code: 422
+      json:
+        code: VALIDATION_FAILED
+
   - name: "User Update Active (403)"
     request:
       url: "{BASE_URL}/users/me"

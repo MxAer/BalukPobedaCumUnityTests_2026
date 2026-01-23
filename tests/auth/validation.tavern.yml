@@ -29,6 +29,19 @@ stages:
       json:
         code: VALIDATION_FAILED
 
+  - name: "Register 422 Email as integer"
+    request:
+      url: "{BASE_URL}/auth/register"
+      method: POST
+      json:
+        email: 1321321321321
+        password: "Password123!"
+        fullName: "No Email"
+    response:
+      status_code: 422
+      json:
+        code: VALIDATION_FAILED
+
   - name: "Register 422 Invalid Email"
     request:
       url: "{BASE_URL}/auth/register"
