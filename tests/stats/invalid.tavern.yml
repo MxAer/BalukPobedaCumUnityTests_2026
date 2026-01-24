@@ -61,6 +61,17 @@ stages:
       json:
         code: UNAUTHORIZED
 
+  - name: "Get overview user (403)"
+    request:
+      url: "{BASE_URL}/stats/overview"
+      method: GET
+      headers:
+        Authorization: "Bearer {user_token}"
+    response:
+      status_code: 403
+      json:
+        code: FORBIDDEN
+
   - name: "Get Timeseries No Token (401)"
     request:
       url: "{BASE_URL}/stats/transactions/timeseries"
@@ -70,3 +81,36 @@ stages:
       status_code: 401
       json:
         code: UNAUTHORIZED
+
+  - name: "Get timeseries user (403)"
+    request:
+      url: "{BASE_URL}/stats/transactions/timeseries"
+      method: GET
+      headers:
+        Authorization: "Bearer {user_token}"
+    response:
+      status_code: 403
+      json:
+        code: FORBIDDEN
+
+  - name: "Get rules matches user (403)"
+    request:
+      url: "{BASE_URL}/stats/rules/matches"
+      method: GET
+      headers:
+        Authorization: "Bearer {user_token}"
+    response:
+      status_code: 403
+      json:
+        code: FORBIDDEN
+
+  - name: "Get merchants user (403)"
+    request:
+      url: "{BASE_URL}/stats/merchants/risk"
+      method: GET
+      headers:
+        Authorization: "Bearer {user_token}"
+    response:
+      status_code: 403
+      json:
+        code: FORBIDDEN
