@@ -3,9 +3,42 @@ test_name: Fraud Rules Invalid Scenarios
 marks:
   - usefixtures:
       - admin_token
+      - user_token
       - generate_random_email
 
 stages:
+  - name: "Create Rule User Token (403)"
+    request:
+      url: "{BASE_URL}/fraud-rules"
+      method: POST
+      headers:
+        Authorization: "Bearer {user_token}"
+      json:
+        name: "Forbidden Rule"
+        dslExpression: "amount > 100"
+    response:
+      status_code: 403
+
+  - name: "Validate Rule User Token (403)"
+    request:
+      url: "{BASE_URL}/fraud-rules/validate"
+      method: POST
+      headers:
+        Authorization: "Bearer {user_token}"
+      json:
+        dslExpression: "amount > 100"
+    response:
+      status_code: 403
+
+  - name: "List Rules User Token (403)"
+    request:
+      url: "{BASE_URL}/fraud-rules"
+      method: GET
+      headers:
+        Authorization: "Bearer {user_token}"
+    response:
+      status_code: 403
+
   - name: "Create Rule"
     request:
       url: "{BASE_URL}/fraud-rules"

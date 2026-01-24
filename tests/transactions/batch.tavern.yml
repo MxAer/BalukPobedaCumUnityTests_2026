@@ -1,0 +1,106 @@
+test_name: Transaction Batch Scenarios
+
+marks:
+  - usefixtures:
+      - user_token
+      - user_id
+      - admin_token
+      - recent_timestamp
+      - other_user_id
+
+stages:
+  - name: "Batch Create: All Valid (201)"
+    request:
+      url: "{BASE_URL}/transactions/batch"
+      method: POST
+      headers:
+        Authorization: "Bearer {user_token}"
+      json:
+        items:
+          - userId: "{user_id}"
+            amount: 100.00
+            currency: "RUB"
+            timestamp: "{recent_timestamp}"
+          - userId: "{user_id}"
+            amount: 200.00
+            currency: "USD"
+            timestamp: "{recent_timestamp}"
+    response:
+      status_code: 201
+      json:
+        items:
+          - index: 0
+            decision:
+              transaction:
+                status: APPROVED
+          - index: 1
+            decision:
+              transaction:
+                status: APPROVED
+
+  - name: "Batch Create: Partial Success (207)"
+    request:
+      url: "{BASE_URL}/transactions/batch"
+      method: POST
+      headers:
+        Authorization: "Bearer {user_token}"
+      json:
+        items:
+          - userId: "{user_id}"
+            amount: 100.00
+            currency: "RUB"
+            timestamp: "{recent_timestamp}"
+          - userId: "{user_id}"
+            amount: -50.00 # Invalid amount
+            currency: "RUB"
+            timestamp: "{recent_timestamp}"
+    response:
+      status_code: 207
+      json:
+        items:
+          - index: 0
+            decision:
+              transaction:
+                status: APPROVED
+          - index: 1
+            error:
+              code: VALIDATION_FAILED
+
+  - name: "Batch Create: User Access Other (207)"
+    request:
+      url: "{BASE_URL}/transactions/batch"
+      method: POST
+      headers:
+        Authorization: "Bearer {user_token}"
+      json:
+        items:
+          - userId: "{user_id}"
+            amount: 100.00
+            currency: "RUB"
+            timestamp: "{recent_timestamp}"
+          - userId: "{other_user_id}" # Not allowed for USER
+            amount: 200.00
+            currency: "RUB"
+            timestamp: "{recent_timestamp}"
+    response:
+      status_code: 207
+      json:
+        items:
+          - index: 0
+            decision:
+              transaction:
+                status: APPROVED
+          - index: 1
+            error:
+              code: FORBIDDEN
+
+  - name: "Batch Create: Empty List (422)"
+    request:
+      url: "{BASE_URL}/transactions/batch"
+      method: POST
+      headers:
+        Authorization: "Bearer {user_token}"
+      json:
+        items: []
+    response:
+      status_code: 422

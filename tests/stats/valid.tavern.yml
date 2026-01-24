@@ -3,6 +3,8 @@ test_name: Stats Valid Scenarios
 marks:
   - usefixtures:
       - admin_token
+      - user_token
+      - user_id
 
 stages:
   - name: "Overview"
@@ -40,3 +42,25 @@ stages:
         Authorization: "Bearer {admin_token}"
     response:
       status_code: 200
+
+  - name: "Risk Profile (Admin Access)"
+    request:
+      url: "{BASE_URL}/stats/users/{user_id}/risk-profile"
+      method: GET
+      headers:
+        Authorization: "Bearer {admin_token}"
+    response:
+      status_code: 200
+      json:
+        userId: "{user_id}"
+
+  - name: "Risk Profile (Own Access)"
+    request:
+      url: "{BASE_URL}/stats/users/{user_id}/risk-profile"
+      method: GET
+      headers:
+        Authorization: "Bearer {user_token}"
+    response:
+      status_code: 200
+      json:
+        userId: "{user_id}"

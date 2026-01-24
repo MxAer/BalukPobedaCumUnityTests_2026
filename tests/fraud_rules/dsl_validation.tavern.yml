@@ -1,0 +1,181 @@
+test_name: Fraud Rules DSL Validation
+
+marks:
+  - usefixtures:
+      - admin_token
+
+stages:
+  - name: "Tier 1: Simple Amount Check (Valid)"
+    request:
+      url: "{BASE_URL}/fraud-rules/validate"
+      method: POST
+      headers:
+        Authorization: "Bearer {admin_token}"
+      json:
+        dslExpression: "amount > 100"
+    response:
+      status_code: 200
+      json:
+        isValid: true
+        normalizedExpression: "amount > 100"
+        errors: []
+
+  - name: "Tier 2: String Comparison (Valid)"
+    request:
+      url: "{BASE_URL}/fraud-rules/validate"
+      method: POST
+      headers:
+        Authorization: "Bearer {admin_token}"
+      json:
+        dslExpression: "currency = 'RUB'"
+    response:
+      status_code: 200
+      json:
+        isValid: true
+        normalizedExpression: "currency = 'RUB'"
+
+  - name: "Tier 3: AND Logic (Valid)"
+    request:
+      url: "{BASE_URL}/fraud-rules/validate"
+      method: POST
+      headers:
+        Authorization: "Bearer {admin_token}"
+      json:
+        dslExpression: "amount > 100 AND currency = 'RUB'"
+    response:
+      status_code: 200
+      json:
+        isValid: true
+        normalizedExpression: "amount > 100 AND currency = 'RUB'"
+
+  - name: "Tier 4: Parentheses and NOT (Valid)"
+    request:
+      url: "{BASE_URL}/fraud-rules/validate"
+      method: POST
+      headers:
+        Authorization: "Bearer {admin_token}"
+      json:
+        dslExpression: "(amount > 100 OR currency = 'USD') AND NOT (user.age < 18)"
+    response:
+      status_code: 200
+      json:
+        isValid: true
+
+  - name: "Tier 5: User Fields (Valid)"
+    request:
+      url: "{BASE_URL}/fraud-rules/validate"
+      method: POST
+      headers:
+        Authorization: "Bearer {admin_token}"
+      json:
+        dslExpression: "user.region = 'RU-MOW'"
+    response:
+      status_code: 200
+      json:
+        isValid: true
+        normalizedExpression: "user.region = 'RU-MOW'"
+
+  - name: "Normalization: Case Insensitivity and Spacing"
+    request:
+      url: "{BASE_URL}/fraud-rules/validate"
+      method: POST
+      headers:
+        Authorization: "Bearer {admin_token}"
+      json:
+        dslExpression: "amount>100 and currency='RUB'"
+    response:
+      status_code: 200
+      json:
+        isValid: true
+        normalizedExpression: "amount > 100 AND currency = 'RUB'"
+
+  - name: "Normalization: Remove Redundant Parentheses"
+    request:
+      url: "{BASE_URL}/fraud-rules/validate"
+      method: POST
+      headers:
+        Authorization: "Bearer {admin_token}"
+      json:
+        dslExpression: "((amount > 100))"
+    response:
+      status_code: 200
+      json:
+        isValid: true
+        normalizedExpression: "amount > 100"
+
+  - name: "Invalid Field"
+    request:
+      url: "{BASE_URL}/fraud-rules/validate"
+      method: POST
+      headers:
+        Authorization: "Bearer {admin_token}"
+      json:
+        dslExpression: "unknown_field > 100"
+    response:
+      status_code: 200
+      json:
+        isValid: false
+        errors:
+          - code: DSL_INVALID_FIELD
+            # message: "Unknown field 'unknown_field'" # Optional check
+
+  - name: "Invalid Operator for Type"
+    request:
+      url: "{BASE_URL}/fraud-rules/validate"
+      method: POST
+      headers:
+        Authorization: "Bearer {admin_token}"
+      json:
+        dslExpression: "currency > 'RUB'"
+    response:
+      status_code: 200
+      json:
+        isValid: false
+        errors:
+          - code: DSL_INVALID_OPERATOR
+
+  - name: "Syntax Error (Missing Value)"
+    request:
+      url: "{BASE_URL}/fraud-rules/validate"
+      method: POST
+      headers:
+        Authorization: "Bearer {admin_token}"
+      json:
+        dslExpression: "amount >"
+    response:
+      status_code: 200
+      json:
+        isValid: false
+        errors:
+          - code: DSL_PARSE_ERROR
+            # position: 8 # Optional check
+
+  - name: "Syntax Error (Unbalanced Parentheses)"
+    request:
+      url: "{BASE_URL}/fraud-rules/validate"
+      method: POST
+      headers:
+        Authorization: "Bearer {admin_token}"
+      json:
+        dslExpression: "(amount > 100"
+    response:
+      status_code: 200
+      json:
+        isValid: false
+        errors:
+          - code: DSL_PARSE_ERROR
+
+  - name: "Complex Mixed Invalid"
+    request:
+      url: "{BASE_URL}/fraud-rules/validate"
+      method: POST
+      headers:
+        Authorization: "Bearer {admin_token}"
+      json:
+        dslExpression: "amount > 100 AND unknown < 5"
+    response:
+      status_code: 200
+      json:
+        isValid: false
+        errors:
+          - code: DSL_INVALID_FIELD

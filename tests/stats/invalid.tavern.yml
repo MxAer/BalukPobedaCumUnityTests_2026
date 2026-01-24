@@ -1,6 +1,56 @@
 test_name: Stats Invalid Scenarios
 
+marks:
+  - usefixtures:
+      - user_token
+      - other_user_id
+
 stages:
+  - name: "Get Risk Profile Other User (403)"
+    request:
+      url: "{BASE_URL}/stats/users/{other_user_id}/risk-profile"
+      method: GET
+      headers:
+        Authorization: "Bearer {user_token}"
+    response:
+      status_code: 403
+
+  - name: "Get Overview User Token (403)"
+    request:
+      url: "{BASE_URL}/stats/overview"
+      method: GET
+      headers:
+        Authorization: "Bearer {user_token}"
+    response:
+      status_code: 403
+
+  - name: "Get Timeseries User Token (403)"
+    request:
+      url: "{BASE_URL}/stats/transactions/timeseries"
+      method: GET
+      headers:
+        Authorization: "Bearer {user_token}"
+    response:
+      status_code: 403
+
+  - name: "Get Rule Matches User Token (403)"
+    request:
+      url: "{BASE_URL}/stats/rules/matches"
+      method: GET
+      headers:
+        Authorization: "Bearer {user_token}"
+    response:
+      status_code: 403
+
+  - name: "Get Merchant Risk User Token (403)"
+    request:
+      url: "{BASE_URL}/stats/merchants/risk"
+      method: GET
+      headers:
+        Authorization: "Bearer {user_token}"
+    response:
+      status_code: 403
+
   - name: "Get Overview No Token (401)"
     request:
       url: "{BASE_URL}/stats/overview"
